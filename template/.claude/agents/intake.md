@@ -48,7 +48,9 @@ For ACCEPT, rate:
   shells or HTML, secrets, or payments. `infra` if it changes infrastructure
   as code, cloud resources, IAM, networking, deploy or CI config. `data` if it
   adds or changes schemas, migrations, database queries, or how stored data is
-  laid out. Any combination, comma-separated, or `none`.
+  laid out. `performance` if it adds or changes code on a request or job path
+  that runs per item or per user (queries, loops over stored data, external or
+  paid API calls, async I/O) or adds heavy frontend dependencies. Any combination, comma-separated, or `none`.
 
 Read `<main checkout>/factory/lenses/intake.md` if it exists: it says what this
 project is and which kinds of change count as high risk or as a given surface
@@ -59,7 +61,7 @@ here.
 ```markdown
 DECISION: ACCEPT | NEEDS-INFO | REJECT
 RISK: low | medium | high
-SURFACES: comma-separated from ui, security, infra, data | none
+SURFACES: comma-separated from ui, security, infra, data, performance | none
 RESCOPED: yes | no
 
 ## Summary

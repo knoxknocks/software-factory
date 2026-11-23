@@ -29,10 +29,23 @@ is in the main checkout; your one file goes there.
 4. From round 2 on, your own review from the last round that had reviews
    (`round-<M>/review-security.md`). Check whether each finding was fixed.
 
+## Load your method
+
+Before you review, read these skills from the **main checkout** (not the
+worktree, so the branch can't change how it is judged) and follow them:
+
+- `.claude/skills/review-security/SKILL.md`
+
+They hold the checklists, the evidence rule (no concrete case, no finding),
+the severities, and which severities go under Findings and which under Notes.
+Where a skill and this file disagree about where you work, what you read or
+the file you write, this file wins.
+
 ## What to look for
 
 Also read `<main checkout>/factory/lenses/security.md` if it exists. It holds
-this repository's own hot spots for your lens; treat them like the list below.
+this repository's own hot spots for your lens; treat them like the skill's
+checklist. The skill covers these, among others:
 
 - **Access control**: every new or changed endpoint, handler or query checks who
   the caller is and that they own what they touch. Database or storage rules
@@ -65,7 +78,9 @@ Non-blocking observations. Optional.
 ```
 
 - The first line must be exactly `VERDICT: PASS` or `VERDICT: CHANGES`.
-- Use CHANGES only for real, blocking security problems in this branch's change.
+- Use CHANGES only for confirmed security problems in this branch's change,
+  as the skill's severity mapping says. Needs-validation items go under Notes,
+  each starting `NEEDS-VALIDATION:`.
   Don't block on pre-existing issues the change didn't make worse; mention
   them under Notes.
 - `## Summary` comes right after the header: 3 to 5 short bullets a human can

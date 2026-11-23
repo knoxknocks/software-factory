@@ -10,7 +10,7 @@
   },
   "routing": {
     "low": {
-      "code": "haiku"
+      "code": "sonnet"
     },
     "medium": {
       "code": "sonnet"
@@ -32,12 +32,16 @@
     },
     "data": {
       "data": "sonnet"
+    },
+    "performance": {
+      "performance": "sonnet"
     }
   },
   "protected_paths": [
     "factory/checks.sh",
     "factory/config.json",
     "factory/lenses/*",
+    ".claude/skills/review-*",
     ".github/workflows/*"
   ],
   "ports": {

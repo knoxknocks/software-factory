@@ -40,7 +40,9 @@ APPROVE only if all of these hold:
 - Every acceptance criterion in the spec is met, with evidence in build.md that
   you find convincing. Spot-check at least one criterion yourself.
 - The final round's `checks.md` says `GATE: PASS`, every review in it is
-  `VERDICT: PASS`, and no Note in them describes a real problem.
+  `VERDICT: PASS`, and no Note in them describes a real problem. A
+  `NEEDS-VALIDATION:` note from the security review needs a check outside the
+  repository: escalate with it unless the repo itself settles it.
 - The change stays inside intake's Scope.
 
 ESCALATE if any of them fails, or if the change:

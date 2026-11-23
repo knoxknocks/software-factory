@@ -79,7 +79,7 @@ Watch progress: `cd factory && python3 -m http.server`, then open
 | `auto_merge` | `false` (default): approved PRs wait for a human. `true`: the factory merges (using `merge_method`) after syncing with the base and re-running the gate. Think hard before enabling. |
 | `labels` | Names of the queue, needs-info and needs-human labels. |
 | `routing` | Risk (`low` / `medium` / `high`) → reviewers and models that always run. |
-| `surface_reviewers` | Surface (`ui`, `security`, `infra`, `data`) → extra reviewers and models. |
+| `surface_reviewers` | Surface (`ui`, `security`, `infra`, `data`, `performance`) → extra reviewers and models. |
 | `protected_paths` | Globs a branch may not modify or delete (the gate fails it). Keeps the checks, the config and the lenses out of a builder's reach. |
 | `ports` | Dev-server ports for builders and ux/ui reviewers: `base + step × job number`. |
 | `prices_usd_per_mtok` | Per-model rates for the cost column. A model missing here makes cost lookup stop, so add new models. The `claude-fable-5-2` entry is an estimate copied from 5-1. |
@@ -138,8 +138,9 @@ python3 -m unittest discover -s template/factory/tests -v    # the factory's own
 
 ```
 template/               copied into your repo by install.sh
-  .claude/agents/       intake, spec-writer, builder, approver, reviewer-{code,security,infra,data,ux,ui}
+  .claude/agents/       intake, spec-writer, builder, approver, reviewer-{code,security,performance,infra,data,ux,ui}
   .claude/skills/factory/SKILL.md   the /factory command
+  .claude/skills/review-*/          review methods loaded by reviewer-code, -security, -performance
   factory/bin/          job (state machine), gate, route
   factory/config.json  factory/checks.sh  factory/dashboard.html  factory/lenses/
   factory/tests/        tests for the scripts
