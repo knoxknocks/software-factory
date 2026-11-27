@@ -1,7 +1,7 @@
 # Example: a real repo's lenses and checks
 
 These are the lenses and `checks.sh` the factory runs with in
-[yh-better-auth](https://github.com/knoxknocks/better-auth), a Python OIDC
+yh-better-auth (a private repo), a Python OIDC
 identity provider on AWS serverless. They show the level of detail that helps:
 short, checkable bullets naming this project's real hot spots.
 

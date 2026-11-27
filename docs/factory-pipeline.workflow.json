@@ -1,0 +1,285 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Software Factory: /factory to Reviewed PR",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "intake-spec",
+        "label": "Intake to spec",
+        "focus": [
+          "cmd_run",
+          "queue",
+          "intake",
+          "route",
+          "spec"
+        ],
+        "note": "/factory run asks job queue for work; intake decides, route picks reviewers, spec-writer writes acceptance criteria."
+      },
+      {
+        "id": "build-loop",
+        "label": "Build, gate, review loop",
+        "focus": [
+          "builder",
+          "gate",
+          "reviewers"
+        ],
+        "note": "Up to max_rounds of build → gate → parallel reviewers. Gate FAIL or any CHANGES returns to the builder."
+      },
+      {
+        "id": "human",
+        "label": "Where humans step in",
+        "focus": [
+          "approver",
+          "pr_ready",
+          "needs_human",
+          "feedback",
+          "needs_info"
+        ],
+        "note": "Approved PRs wait for a human merge; escalations and feedback restart the build with a fresh round budget."
+      }
+    ]
+  },
+  "lanes": [
+    {
+      "id": "human",
+      "label": "Human (/factory)"
+    },
+    {
+      "id": "scripts",
+      "label": "factory/bin scripts"
+    },
+    {
+      "id": "agents",
+      "label": "Subagents"
+    },
+    {
+      "id": "parked",
+      "label": "Parked for a human",
+      "variant": "exception"
+    }
+  ],
+  "phases": [
+    {
+      "id": "p_intake",
+      "label": "Intake",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "p_spec",
+      "label": "Spec",
+      "fromCol": 2,
+      "toCol": 2
+    },
+    {
+      "id": "p_build",
+      "label": "Build + gate + review (≤ max_rounds)",
+      "fromCol": 3,
+      "toCol": 4,
+      "variant": "emphasis"
+    },
+    {
+      "id": "p_ship",
+      "label": "Approve",
+      "fromCol": 5,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "cmd_run",
+    "queue",
+    "intake",
+    "route",
+    "spec",
+    "builder",
+    "gate",
+    "reviewers",
+    "approver",
+    "pr_ready"
+  ],
+  "nodes": [
+    {
+      "id": "cmd_run",
+      "lane": "human",
+      "col": 0,
+      "type": "frontend",
+      "label": "/factory run",
+      "sublabel": "issue labeled factory"
+    },
+    {
+      "id": "feedback",
+      "lane": "human",
+      "col": 3,
+      "type": "frontend",
+      "label": "feedback",
+      "sublabel": "/factory feedback"
+    },
+    {
+      "id": "pr_ready",
+      "lane": "human",
+      "col": 5,
+      "type": "frontend",
+      "label": "PR ready",
+      "sublabel": "human merges"
+    },
+    {
+      "id": "queue",
+      "lane": "scripts",
+      "col": 0,
+      "type": "backend",
+      "label": "job queue",
+      "sublabel": "create · concurrency"
+    },
+    {
+      "id": "route",
+      "lane": "scripts",
+      "col": 2,
+      "type": "backend",
+      "label": "route",
+      "sublabel": "risk → reviewers"
+    },
+    {
+      "id": "gate",
+      "lane": "scripts",
+      "col": 4,
+      "type": "security",
+      "label": "gate",
+      "sublabel": "checks.sh",
+      "tag": "blocking"
+    },
+    {
+      "id": "intake",
+      "lane": "agents",
+      "col": 1,
+      "type": "cloud",
+      "label": "intake",
+      "sublabel": "accept · risk"
+    },
+    {
+      "id": "spec",
+      "lane": "agents",
+      "col": 2,
+      "type": "cloud",
+      "label": "spec-writer",
+      "sublabel": "spec.md"
+    },
+    {
+      "id": "builder",
+      "lane": "agents",
+      "col": 3,
+      "type": "cloud",
+      "label": "builder",
+      "sublabel": "draft PR",
+      "tag": "worktree"
+    },
+    {
+      "id": "reviewers",
+      "lane": "agents",
+      "col": 4,
+      "type": "cloud",
+      "label": "reviewers",
+      "sublabel": "parallel, wait all"
+    },
+    {
+      "id": "approver",
+      "lane": "agents",
+      "col": 5,
+      "type": "security",
+      "label": "approver",
+      "sublabel": "decision.md"
+    },
+    {
+      "id": "needs_info",
+      "lane": "parked",
+      "col": 1,
+      "type": "external",
+      "label": "needs-info",
+      "sublabel": "ask the author"
+    },
+    {
+      "id": "needs_human",
+      "lane": "parked",
+      "col": 4,
+      "type": "external",
+      "label": "needs-human",
+      "sublabel": "escalate · BLOCKED"
+    }
+  ],
+  "edges": [
+    {
+      "from": "cmd_run",
+      "to": "queue"
+    },
+    {
+      "from": "queue",
+      "to": "intake",
+      "label": "new"
+    },
+    {
+      "from": "intake",
+      "to": "route",
+      "label": "ACCEPT"
+    },
+    {
+      "from": "route",
+      "to": "spec"
+    },
+    {
+      "from": "spec",
+      "to": "builder"
+    },
+    {
+      "from": "builder",
+      "to": "gate",
+      "label": "READY"
+    },
+    {
+      "from": "gate",
+      "to": "reviewers",
+      "label": "PASS"
+    },
+    {
+      "from": "reviewers",
+      "to": "approver",
+      "label": "all PASS"
+    },
+    {
+      "from": "approver",
+      "to": "pr_ready",
+      "label": "APPROVE"
+    },
+    {
+      "from": "gate",
+      "to": "builder",
+      "label": "FAIL",
+      "role": "return",
+      "variant": "dashed"
+    },
+    {
+      "from": "reviewers",
+      "to": "builder",
+      "label": "CHANGES",
+      "role": "return",
+      "variant": "dashed"
+    },
+    {
+      "from": "intake",
+      "to": "needs_info",
+      "label": "NEEDS-INFO",
+      "role": "error"
+    },
+    {
+      "from": "approver",
+      "to": "needs_human",
+      "label": "ESCALATE",
+      "role": "error"
+    },
+    {
+      "from": "feedback",
+      "to": "builder",
+      "label": "new round"
+    }
+  ]
+}
