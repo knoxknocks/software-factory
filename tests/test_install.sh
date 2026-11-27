@@ -8,10 +8,21 @@ pass() { echo "ok   $1"; }
 fail() { echo "FAIL $1" >&2; exit 1; }
 
 # 1. no project-specific text leaked into the template
-if grep -rniE "yh-better-auth|aurora|dynamodb|argon|knoxknocks|seahyh|whentimestoodstill|identity provider|\bbe/|\bfe/" "$HERE/template" --include='*' -l | grep -v __pycache__ | grep .; then
+if grep -rniE "yh-better-auth|aurora|dynamodb|argon|knoxknocks|seahyh|whentimestoodstill|identity provider|\bbe/|\bfe/" "$HERE/template" --include='*' -l | grep -v __pycache__ \
+     | grep -v '/template/factory/lenses/[a-z]*\.md$' | grep .; then
   fail "project-specific text found in template/ (files above)"
 fi
 pass "template has no project-specific text"
+# lens placeholders may quote another project, but only inside their HTML comment
+for f in "$HERE"/template/factory/lenses/*.md; do
+  [ "$(basename "$f")" = README.md ] && continue
+  python3 - "$f" <<'PY' || fail "$f: project-specific text outside the placeholder comment"
+import re, sys
+text = re.sub(r"<!--.*?-->", "", open(sys.argv[1]).read(), flags=re.S)
+sys.exit(1 if re.search(r"yh-better-auth|aurora|dynamodb|argon|identity provider|\bbe/", text, re.I) else 0)
+PY
+done
+pass "lens placeholders keep example text inside their comment"
 ! grep -rn "^model: fable" "$HERE/template/.claude/agents" || fail "an agent still uses fable"
 pass "no agent uses fable"
 

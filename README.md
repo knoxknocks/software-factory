@@ -101,7 +101,9 @@ Then, in your repo:
 2. **Review `factory/config.json`** (table below).
 3. **Fill in `AGENTS.md`.** Every agent reads it first: layout, setup, how to run
    the app on a given port, validation, conventions. See `templates/AGENTS.example.md`.
-4. **Optional: add lenses** in `factory/lenses/` (see below).
+4. **Fill in the lenses** in `factory/lenses/` (see below). The installer adds one
+   placeholder file per agent; until you fill one in, that agent works without
+   project-specific guidance. Start with `intake.md` and `approver.md`.
 5. **Commit the factory files to your base branch and push.** Jobs branch from
    `origin/<base_branch>`, so the factory must be there first.
 6. **Start it.** Label an issue `factory`, then run `/factory run` in Claude Code
@@ -197,7 +199,10 @@ every database query must go through your `DataApi` helper.
 A **lens** is a short note you write for one agent to tell it that. Think of it as
 the briefing you'd give a new teammate before their first code review: "here's
 what matters in this repo, here's what to watch for." Each lens is a plain
-Markdown file in `factory/lenses/`, and every one is optional.
+Markdown file in `factory/lenses/`. The installer adds a placeholder for each one,
+with a hint and example bullets inside a comment, so you can open the file and
+replace the comment with your own bullets. An unfilled placeholder is harmless:
+it just tells the agent there's no project-specific guidance yet.
 
 | File | Who reads it | What to tell it |
 |------|--------------|-----------------|
@@ -256,8 +261,8 @@ Escalate when the change:
 not from the job's branch, and `factory/lenses/` is in `protected_paths`. A builder
 can't weaken the rules its own work is judged by.
 
-Start with `intake.md` and `approver.md`, then add a reviewer lens when you notice
-a reviewer missing something specific to your repo. See
+Fill in `intake.md` and `approver.md` first, then a reviewer's lens when you notice
+it missing something specific to your repo. Delete any you'll never use. See
 [`examples/yh-better-auth/lenses/`](examples/yh-better-auth/lenses/) for a full real set.
 
 ### Example project: yh-better-auth
