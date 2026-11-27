@@ -204,16 +204,17 @@ with a hint and example bullets inside a comment, so you can open the file and
 replace the comment with your own bullets. An unfilled placeholder is harmless:
 it just tells the agent there's no project-specific guidance yet.
 
-| File | Who reads it | What to tell it |
-|------|--------------|-----------------|
-| `intake.md` | intake | What the project is, and which kinds of change are risky |
-| `approver.md` | approver | Changes that must always go to a person, even if every review passed |
-| `security.md` | security reviewer | Where the sensitive code is: auth, tokens, input handling, secrets |
-| `infra.md` | infra reviewer | Naming rules, required settings, what must never be public |
-| `data.md` | data reviewer | Migration rules, query conventions |
-| `performance.md` | performance reviewer | Hot paths, expected data sizes and traffic |
-| `code.md` | code reviewer | Conventions beyond `AGENTS.md` |
-| `ui.md` / `ux.md` | ui / ux reviewers | Design tokens and components to reuse; flows, roles, copy rules |
+| File | Who reads it | What to tell it | Example bullet |
+|------|--------------|-----------------|----------------|
+| `intake.md` | intake, which decides whether to build an issue and how risky it is | What your project is, and which parts of it are risky. Intake uses this to tag each issue (`ui`, `security`, `infra`, `data`, `performance`), and the tags decide which reviewers run. | "Any change to sign-in, sessions or payments is `security`." |
+| `approver.md` | approver, the last check before a PR is handed to you | Changes you always want to decide yourself, even if every reviewer said the code is fine. Anything matching gets flagged for you instead of approved. | "Escalate any change that adds a dependency or touches billing." |
+| `security.md` | security reviewer | Where your sensitive code lives (sign-in, passwords, tokens, payments, file uploads) and the rules that must always hold there. | "Session cookies in `auth/session.py` are always HttpOnly and Secure." |
+| `infra.md` | infra reviewer, for cloud resources, CI and deploy config | How your cloud resources must be named and configured, which settings are mandatory, and what must never be reachable from the internet. | "Storage buckets are never public; every resource is named `myapp-<env>-<name>`." |
+| `data.md` | data reviewer, for database changes | How database changes must be made (migrations), how queries must be written, and which tables are large or sensitive. | "Never edit a migration that has already run; add a new one." |
+| `performance.md` | performance reviewer | Which code runs most often or on the biggest data, so the reviewer knows where slowness matters. | "`/search` runs on every keystroke; no extra database queries in it." |
+| `code.md` | code reviewer | House style and structure the reviewer can't guess: where new code goes, which helpers to reuse, how errors are handled. Setup and commands go in `AGENTS.md` instead. | "New endpoints go in `api/routes/` and follow `api/routes/users.py`." |
+| `ui.md` | ui reviewer, for how pages look | Your design system: colours, spacing and fonts to use, and which existing components to reuse instead of building new ones. | "Use `<Button>` from `components/ui/`; never hard-code colours." |
+| `ux.md` | ux reviewer, for how pages work | Who your users are and what each role may do, the main user flows, and rules for wording on screen. | "Deleting anything asks for confirmation; members never see admin pages." |
 
 **How to write one.** Short bullets, each something a reviewer can check against
 a diff. Name real files, functions and rules. Vague advice ("write secure code")
